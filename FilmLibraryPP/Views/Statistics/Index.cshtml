@@ -1,0 +1,114 @@
+@{
+    ViewData["Title"] = "Statystyki";
+    var byGenreLabels = ViewBag.ByGenreLabels as string[] ?? Array.Empty<string>();
+    var byGenreData = ViewBag.ByGenreData as int[] ?? Array.Empty<int>();
+    var byYearLabels = ViewBag.ByYearLabels as string[] ?? Array.Empty<string>();
+    var byYearData = ViewBag.ByYearData as int[] ?? Array.Empty<int>();
+    var ratingLabels = ViewBag.RatingLabels as string[] ?? Array.Empty<string>();
+    var ratingData = ViewBag.RatingData as int[] ?? Array.Empty<int>();
+}
+
+<h2 class="mb-4"><i class="bi bi-bar-chart-line me-2"></i>Statystyki</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <div class="display-5">@ViewBag.TotalCount</div>
+                <div>filmów łącznie</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <div class="display-5">@ViewBag.WatchedCount</div>
+                <div>obejrzanych</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <div class="display-5">@ViewBag.ToWatchCount</div>
+                <div>do obejrzenia</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <div class="display-5"><i class="bi bi-star-fill"></i> @ViewBag.AvgRating</div>
+                <div>średnia ocena</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><strong>Filmy według gatunku</strong></div>
+            <div class="card-body"><canvas id="chartGenre"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><strong>Rozkład ocen</strong></div>
+            <div class="card-body"><canvas id="chartRating"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header"><strong>Obejrzane według roku</strong></div>
+            <div class="card-body"><canvas id="chartYear"></canvas></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        const palette = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#6610f2'];
+
+        new Chart(document.getElementById('chartGenre'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(byGenreLabels)),
+                datasets: [{
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(byGenreData)),
+                    backgroundColor: palette
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('chartRating'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ratingLabels)),
+                datasets: [{
+                    label: 'Liczba filmów',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ratingData)),
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        new Chart(document.getElementById('chartYear'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(byYearLabels)),
+                datasets: [{
+                    label: 'Obejrzane filmy',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(byYearData)),
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+    </script>
+}

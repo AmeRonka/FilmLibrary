@@ -1,0 +1,77 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: #f7f7fa;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #eaeaea;
+}
+
+.hero .lead {
+  color: #d0d0d0;
+}
+
+.film-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.film-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.film-card .card-img-top {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+}
+
+.film-row .img-fluid {
+  height: 100%;
+  object-fit: cover;
+  max-height: 220px;
+  width: 100%;
+}
+
+.poster-thumb {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.rating {
+  font-weight: 600;
+  color: #b8860b;
+}
+
+.navbar-brand {
+  font-weight: 600;
+}
+
+.footer {
+  background-color: #fff;
+  padding: 12px 0;
+}

@@ -1,0 +1,142 @@
+using FilmLibraryPP.Models;
+
+namespace FilmLibraryPP.Data
+{
+    public static class SampleData
+    {
+        public static readonly List<Film> Films = new()
+        {
+            new Film
+            {
+                Id = 1,
+                Title = "Incepcja",
+                Year = 2010,
+                Genre = "Sci-Fi",
+                Director = "Christopher Nolan",
+                Rating = 8.8m,
+                Description = "Złodziej, który kradnie sekrety korporacyjne za pomocą technologii dzielenia się snami, dostaje odwrotne zadanie: zaszczepić ideę w umyśle prezesa.",
+                Review = "Genialna konstrukcja, ogląda się z otwartymi ustami.",
+                WatchedDate = new DateTime(2026, 1, 25),
+                IsWatched = true,
+                PosterUrl = "https://placehold.co/300x450/1a1a2e/eaeaea?text=Incepcja",
+                Tags = new() { "Ulubione", "Klasyka" }
+            },
+            new Film
+            {
+                Id = 2,
+                Title = "Skazani na Shawshank",
+                Year = 1994,
+                Genre = "Dramat",
+                Director = "Frank Darabont",
+                Rating = 9.3m,
+                Description = "Dwóch więźniów buduje przyjaźń przez wiele lat, znajdując pocieszenie i odkupienie poprzez akty zwykłej ludzkiej przyzwoitości.",
+                Review = "Najlepszy film o nadziei jaki widziałam.",
+                WatchedDate = new DateTime(2023, 8, 14),
+                IsWatched = true,
+                PosterUrl = "https://placehold.co/300x450/2d4a3e/eaeaea?text=Shawshank",
+                Tags = new() { "Ulubione", "Klasyka" }
+            },
+            new Film
+            {
+                Id = 3,
+                Title = "Pulp Fiction",
+                Year = 1994,
+                Genre = "Kryminał",
+                Director = "Quentin Tarantino",
+                Rating = 8.9m,
+                Description = "Życie dwóch płatnych zabójców mafii, boksera, gangstera i jego żony oraz pary rabusiów restauracji splata się w czterech opowieściach o przemocy i odkupieniu.",
+                Review = "Dialogi to miód. Nie nudzi się nigdy.",
+                WatchedDate = new DateTime(2024, 7, 22),
+                IsWatched = true,
+                PosterUrl = "https://placehold.co/300x450/8b2635/eaeaea?text=Pulp+Fiction",
+                Tags = new() { "Klasyka" }
+            },
+            new Film
+            {
+                Id = 4,
+                Title = "Interstellar",
+                Year = 2014,
+                Genre = "Sci-Fi",
+                Director = "Christopher Nolan",
+                Rating = 8.7m,
+                Description = "Zespół eksploratorów przemierza tunel czasoprzestrzenny w kosmosie w próbie zapewnienia ludzkości przetrwania.",
+                Review = "Końcówka rozwala. Hans Zimmer jak zawsze.",
+                WatchedDate = new DateTime(2025, 3, 11),
+                IsWatched = true,
+                PosterUrl = "https://placehold.co/300x450/0d1b2a/eaeaea?text=Interstellar",
+                Tags = new() { "Ulubione" }
+            },
+            new Film
+            {
+                Id = 5,
+                Title = "Parasite",
+                Year = 2019,
+                Genre = "Dramat",
+                Director = "Bong Joon-ho",
+                Rating = 8.6m,
+                Description = "Chciwość i dyskryminacja klasowa zagrażają nowo powstałej, symbiotycznej relacji między bogatą rodziną Park a ubogą rodziną Kim.",
+                Review = null,
+                WatchedDate = null,
+                IsWatched = false,
+                PosterUrl = "https://placehold.co/300x450/3a2e2e/eaeaea?text=Parasite",
+                Tags = new() { "Do obejrzenia w weekend" }
+            },
+            new Film
+            {
+                Id = 6,
+                Title = "Diuna: Część druga",
+                Year = 2024,
+                Genre = "Sci-Fi",
+                Director = "Denis Villeneuve",
+                Rating = 8.5m,
+                Description = "Paul Atryda jednoczy się z Fremenami, by toczyć wojnę o zemstę przeciwko spiskowcom, którzy zniszczyli jego rodzinę.",
+                Review = null,
+                WatchedDate = null,
+                IsWatched = false,
+                PosterUrl = "https://placehold.co/300x450/c97b3c/eaeaea?text=Diuna+2",
+                Tags = new() { "Premiera" }
+            },
+            new Film
+            {
+                Id = 7,
+                Title = "Oppenheimer",
+                Year = 2023,
+                Genre = "Biografia",
+                Director = "Christopher Nolan",
+                Rating = 8.4m,
+                Description = "Historia amerykańskiego naukowca J. Roberta Oppenheimera i jego roli w powstaniu bomby atomowej.",
+                Review = null,
+                WatchedDate = null,
+                IsWatched = false,
+                PosterUrl = "https://placehold.co/300x450/2b2b2b/eaeaea?text=Oppenheimer",
+                Tags = new() { "Premiera" }
+            },
+            new Film
+            {
+                Id = 8,
+                Title = "Ojciec chrzestny",
+                Year = 1972,
+                Genre = "Kryminał",
+                Director = "Francis Ford Coppola",
+                Rating = 9.2m,
+                Description = "Starzejący się patriarcha rodu mafijnego przekazuje kontrolę nad swoim tajnym imperium niechętnemu synowi.",
+                Review = "Klasyk klasyków.",
+                WatchedDate = new DateTime(2024, 2, 11),
+                IsWatched = true,
+                PosterUrl = "https://placehold.co/300x450/1a1a1a/eaeaea?text=Ojciec+Chrzestny",
+                Tags = new() { "Klasyka" }
+            }
+        };
+
+        public static IEnumerable<string> AllGenres =>
+            Films.Where(f => f.Genre != null)
+                 .Select(f => f.Genre!)
+                 .Distinct()
+                 .OrderBy(g => g);
+
+        public static IEnumerable<string> AllTags =>
+            Films.SelectMany(f => f.Tags)
+                 .Distinct()
+                 .OrderBy(t => t);
+    }
+}

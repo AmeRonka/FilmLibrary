@@ -1,0 +1,87 @@
+@model FilmLibraryPP.Models.Film
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Strona główna</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Filmy</a></li>
+        <li class="breadcrumb-item active">@Model.Title</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <img src="@Model.PosterUrl" alt="@Model.Title" class="img-fluid rounded shadow-sm" />
+    </div>
+    <div class="col-md-8">
+        <h1>@Model.Title <small class="text-muted">(@Model.Year)</small></h1>
+        <p class="lead">@Model.Description</p>
+
+        <table class="table table-sm">
+            <tbody>
+                <tr><th>Reżyser</th><td>@Model.Director</td></tr>
+                <tr><th>Gatunek</th><td><span class="badge bg-info text-dark">@Model.Genre</span></td></tr>
+                <tr>
+                    <th>Ocena</th>
+                    <td>
+                        @if (Model.Rating != null)
+                        {
+                            <span class="rating fs-5"><i class="bi bi-star-fill"></i> @Model.Rating / 10</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">— brak —</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        @if (Model.IsWatched)
+                        {
+                            <span class="badge bg-success">Obejrzany @(Model.WatchedDate?.ToString("yyyy-MM-dd"))</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Do obejrzenia</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th>Tagi</th>
+                    <td>
+                        @if (Model.Tags.Any())
+                        {
+                            foreach (var t in Model.Tags)
+                            {
+                                <span class="badge bg-secondary me-1">@t</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">— brak —</span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Review))
+        {
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-chat-quote me-1"></i> Moja recenzja</h5>
+                    <p class="card-text mb-0">@Model.Review</p>
+                </div>
+            </div>
+        }
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-outline-secondary">← Wróć do listy</a>
+            <button class="btn btn-outline-primary" disabled>Edytuj</button>
+            <button class="btn btn-outline-danger" disabled>Usuń</button>
+        </div>
+    </div>
+</div>

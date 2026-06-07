@@ -1,0 +1,45 @@
+@model List<FilmLibraryPP.Models.Film>
+@{
+    ViewData["Title"] = "Obejrzane";
+}
+
+<h2 class="mb-4"><i class="bi bi-check2-circle me-2"></i>Obejrzane <span class="badge bg-success">@Model.Count</span></h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nie masz jeszcze żadnych obejrzanych filmów.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th></th>
+                    <th>Tytuł</th>
+                    <th>Rok</th>
+                    <th>Reżyser</th>
+                    <th>Gatunek</th>
+                    <th>Ocena</th>
+                    <th>Data obejrzenia</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var film in Model)
+                {
+                    <tr>
+                        <td><img src="@film.PosterUrl" alt="@film.Title" class="poster-thumb" /></td>
+                        <td><strong>@film.Title</strong></td>
+                        <td>@film.Year</td>
+                        <td>@film.Director</td>
+                        <td><span class="badge bg-info text-dark">@film.Genre</span></td>
+                        <td><span class="rating"><i class="bi bi-star-fill"></i> @film.Rating</span></td>
+                        <td>@(film.WatchedDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                        <td><a asp-action="Details" asp-route-id="@film.Id" class="btn btn-sm btn-outline-primary">Szczegóły</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
