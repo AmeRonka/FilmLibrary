@@ -1,55 +1,68 @@
 using FilmLibraryPP.Data;
-using FilmLibraryPP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilmLibraryPP.Controllers
 {
     public class FilmsController : Controller
     {
-        public IActionResult Index(string? search, string? genre)
+        private readonly ApplicationDbContext _db;
+
+        public FilmsController(ApplicationDbContext db)
         {
-            var films = SampleData.Films.AsEnumerable();
+            _db = db;
+        }
+
+        public async Task<IActionResult> Index(string? search, string? genre)
+        {
+            var query = _db.Films.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                films = films.Where(f =>
-                    f.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    (f.Director ?? string.Empty).Contains(search, StringComparison.OrdinalIgnoreCase));
+                var pattern = $"%{search}%";
+                query = query.Where(f =>
+                    EF.Functions.ILike(f.Title, pattern) ||
+                    (f.Director != null && EF.Functions.ILike(f.Director, pattern)));
             }
 
             if (!string.IsNullOrWhiteSpace(genre))
             {
-                films = films.Where(f => f.Genre == genre);
+                query = query.Where(f => f.Genre == genre);
             }
 
-            ViewBag.Genres = SampleData.AllGenres;
+            ViewBag.Genres = await _db.Films
+                .Where(f => f.Genre != null)
+                .Select(f => f.Genre!)
+                .Distinct()
+                .OrderBy(g => g)
+                .ToListAsync();
             ViewBag.Search = search;
             ViewBag.Genre = genre;
 
-            return View(films.OrderByDescending(f => f.Year).ToList());
+            return View(await query.OrderByDescending(f => f.Year).ToListAsync());
         }
 
-        public IActionResult ToWatch()
+        public async Task<IActionResult> ToWatch()
         {
-            var films = SampleData.Films
+            var films = await _db.Films
                 .Where(f => !f.IsWatched)
                 .OrderByDescending(f => f.Year)
-                .ToList();
+                .ToListAsync();
             return View(films);
         }
 
-        public IActionResult Watched()
+        public async Task<IActionResult> Watched()
         {
-            var films = SampleData.Films
+            var films = await _db.Films
                 .Where(f => f.IsWatched)
                 .OrderByDescending(f => f.WatchedDate)
-                .ToList();
+                .ToListAsync();
             return View(films);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var film = SampleData.Films.FirstOrDefault(f => f.Id == id);
+            var film = await _db.Films.FirstOrDefaultAsync(f => f.Id == id);
             if (film == null)
             {
                 return NotFound();

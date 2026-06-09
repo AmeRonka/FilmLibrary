@@ -1,13 +1,21 @@
 using FilmLibraryPP.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilmLibraryPP.Controllers
 {
     public class StatisticsController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _db;
+
+        public StatisticsController(ApplicationDbContext db)
         {
-            var films = SampleData.Films;
+            _db = db;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var films = await _db.Films.ToListAsync();
 
             var watchedCount = films.Count(f => f.IsWatched);
             var toWatchCount = films.Count(f => !f.IsWatched);

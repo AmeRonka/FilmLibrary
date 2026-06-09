@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FilmLibraryPP.Models
 {
@@ -30,6 +31,7 @@ namespace FilmLibraryPP.Models
 
         [Display(Name = "Data obejrzenia")]
         [DataType(DataType.Date)]
+        [Column(TypeName = "timestamp without time zone")]
         public DateTime? WatchedDate { get; set; }
 
         [Display(Name = "Obejrzany")]
