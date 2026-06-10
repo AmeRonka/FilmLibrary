@@ -1,0 +1,94 @@
+@model FilmLibraryPP.Models.Film
+@{
+    ViewData["Title"] = "Edytuj " + Model.Title;
+    var tagsCsv = string.Join(", ", Model.Tags.Select(t => t.Name));
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Strona główna</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Filmy</a></li>
+        <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">@Model.Title</a></li>
+        <li class="breadcrumb-item active">Edytuj</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4"><i class="bi bi-pencil me-2"></i>Edytuj film</h2>
+
+<form asp-action="Edit" method="post" class="row g-3">
+    <input type="hidden" asp-for="Id" />
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger col-12" role="alert"></div>
+
+    <div class="col-md-8">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Year" class="form-label"></label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Director" class="form-label"></label>
+        <input asp-for="Director" class="form-control" />
+        <span asp-validation-for="Director" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Genre" class="form-label"></label>
+        <input asp-for="Genre" class="form-control" />
+        <span asp-validation-for="Genre" class="text-danger"></span>
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Rating" class="form-label"></label>
+        <input asp-for="Rating" class="form-control" min="1" max="10" step="any"
+               oninvalid="this.setCustomValidity('Rating must be a number between 1 and 10.')"
+               oninput="this.setCustomValidity('')" />
+        <span asp-validation-for="Rating" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Review" class="form-label"></label>
+        <textarea asp-for="Review" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Review" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="PosterUrl" class="form-label"></label>
+        <input asp-for="PosterUrl" class="form-control" placeholder="https://..." />
+        <span asp-validation-for="PosterUrl" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label for="tagsCsv" class="form-label">Tagi (rozdzielone przecinkami)</label>
+        <input id="tagsCsv" name="tagsCsv" class="form-control" value="@tagsCsv" placeholder="np. Ulubione, Klasyka" />
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check">
+            <input asp-for="IsWatched" class="form-check-input" />
+            <label asp-for="IsWatched" class="form-check-label"></label>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="WatchedDate" class="form-label"></label>
+        <input asp-for="WatchedDate" class="form-control" />
+        <span asp-validation-for="WatchedDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-12 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-1"></i>Zapisz zmiany</button>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Anuluj</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

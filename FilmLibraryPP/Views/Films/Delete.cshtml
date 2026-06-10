@@ -1,0 +1,46 @@
+@model FilmLibraryPP.Models.Film
+@{
+    ViewData["Title"] = "Usuń " + Model.Title;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Strona główna</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Filmy</a></li>
+        <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">@Model.Title</a></li>
+        <li class="breadcrumb-item active">Usuń</li>
+    </ol>
+</nav>
+
+<div class="alert alert-danger">
+    <h4 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Czy na pewno usunąć ten film?</h4>
+    <p class="mb-0">Operacja jest nieodwracalna.</p>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="alert alert-warning" role="alert"></div>
+
+<div class="row">
+    @if (!string.IsNullOrWhiteSpace(Model.PosterUrl))
+    {
+        <div class="col-md-3 mb-3">
+            <img src="@Model.PosterUrl" alt="@Model.Title" class="img-fluid rounded shadow-sm" />
+        </div>
+    }
+    <div class="col-md-9">
+        <h3>@Model.Title <small class="text-muted">(@Model.Year)</small></h3>
+        <table class="table table-sm">
+            <tbody>
+                <tr><th>Reżyser</th><td>@Model.Director</td></tr>
+                <tr><th>Gatunek</th><td>@Model.Genre</td></tr>
+                <tr><th>Ocena</th><td>@(Model.Rating?.ToString() ?? "—")</td></tr>
+                <tr><th>Status</th><td>@(Model.IsWatched ? "Obejrzany" : "Do obejrzenia")</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Tak, usuń</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Anuluj</a>
+</form>

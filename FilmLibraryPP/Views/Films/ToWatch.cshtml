@@ -1,6 +1,8 @@
+@using FilmLibraryPP.Data
 @model List<FilmLibraryPP.Models.Film>
 @{
     ViewData["Title"] = "Do obejrzenia";
+    var isAdmin = User.IsInRole(IdentitySeed.AdminRole);
 }
 
 <h2 class="mb-4"><i class="bi bi-bookmark me-2"></i>Do obejrzenia <span class="badge bg-warning text-dark">@Model.Count</span></h2>
@@ -25,15 +27,24 @@ else
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="card-title">@film.Title</h5>
-                                <p class="text-muted mb-2"><small>@film.Year • @film.Director • @film.Genre</small></p>
+                                <p class="text-muted mb-2">
+                                    <small>@film.Year • @film.Director • @film.Genre</small>
+                                    @if (isAdmin && film.Owner != null)
+                                    {
+                                        <br /><small><i class="bi bi-person-circle me-1"></i>@film.Owner.Email</small>
+                                    }
+                                </p>
                                 <p class="card-text small">@film.Description</p>
                                 @foreach (var tag in film.Tags)
                                 {
-                                    <span class="badge bg-secondary">@tag</span>
+                                    <span class="badge bg-secondary">@tag.Name</span>
                                 }
-                                <div class="mt-2">
+                                <div class="mt-2 d-flex gap-2">
                                     <a asp-action="Details" asp-route-id="@film.Id" class="btn btn-outline-primary btn-sm">Szczegóły</a>
-                                    <button class="btn btn-outline-success btn-sm" disabled>Oznacz jako obejrzany</button>
+                                    <form asp-action="MarkWatched" asp-route-id="@film.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-check2 me-1"></i>Oznacz jako obejrzany</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

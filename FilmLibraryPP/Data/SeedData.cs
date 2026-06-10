@@ -4,14 +4,23 @@ namespace FilmLibraryPP.Data
 {
     public static class SeedData
     {
-        public static void Initialize(ApplicationDbContext context)
+        public static void Initialize(ApplicationDbContext context, string? ownerId = null)
         {
             if (context.Films.Any())
             {
+                BackfillOrphans(context, ownerId);
                 return;
             }
 
-            context.Films.AddRange(
+            var tagNames = new[] { "Ulubione", "Klasyka", "Do obejrzenia w weekend", "Premiera" };
+            var tags = tagNames.ToDictionary(
+                name => name,
+                name => new Tag { Name = name, OwnerId = ownerId });
+
+            context.Tags.AddRange(tags.Values);
+
+            var films = new List<Film>
+            {
                 new Film
                 {
                     Title = "Incepcja",
@@ -24,7 +33,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = new DateTime(2026, 1, 25),
                     IsWatched = true,
                     PosterUrl = "https://placehold.co/300x450/1a1a2e/eaeaea?text=Incepcja",
-                    Tags = new List<string> { "Ulubione", "Klasyka" }
+                    Tags = new List<Tag> { tags["Ulubione"], tags["Klasyka"] }
                 },
                 new Film
                 {
@@ -38,7 +47,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = new DateTime(2023, 8, 14),
                     IsWatched = true,
                     PosterUrl = "https://placehold.co/300x450/2d4a3e/eaeaea?text=Shawshank",
-                    Tags = new List<string> { "Ulubione", "Klasyka" }
+                    Tags = new List<Tag> { tags["Ulubione"], tags["Klasyka"] }
                 },
                 new Film
                 {
@@ -52,7 +61,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = new DateTime(2024, 7, 22),
                     IsWatched = true,
                     PosterUrl = "https://placehold.co/300x450/8b2635/eaeaea?text=Pulp+Fiction",
-                    Tags = new List<string> { "Klasyka" }
+                    Tags = new List<Tag> { tags["Klasyka"] }
                 },
                 new Film
                 {
@@ -66,7 +75,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = new DateTime(2025, 3, 11),
                     IsWatched = true,
                     PosterUrl = "https://placehold.co/300x450/0d1b2a/eaeaea?text=Interstellar",
-                    Tags = new List<string> { "Ulubione" }
+                    Tags = new List<Tag> { tags["Ulubione"] }
                 },
                 new Film
                 {
@@ -80,7 +89,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = null,
                     IsWatched = false,
                     PosterUrl = "https://placehold.co/300x450/3a2e2e/eaeaea?text=Parasite",
-                    Tags = new List<string> { "Do obejrzenia w weekend" }
+                    Tags = new List<Tag> { tags["Do obejrzenia w weekend"] }
                 },
                 new Film
                 {
@@ -94,7 +103,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = null,
                     IsWatched = false,
                     PosterUrl = "https://placehold.co/300x450/c97b3c/eaeaea?text=Diuna+2",
-                    Tags = new List<string> { "Premiera" }
+                    Tags = new List<Tag> { tags["Premiera"] }
                 },
                 new Film
                 {
@@ -108,7 +117,7 @@ namespace FilmLibraryPP.Data
                     WatchedDate = null,
                     IsWatched = false,
                     PosterUrl = "https://placehold.co/300x450/2b2b2b/eaeaea?text=Oppenheimer",
-                    Tags = new List<string> { "Premiera" }
+                    Tags = new List<Tag> { tags["Premiera"] }
                 },
                 new Film
                 {
@@ -122,10 +131,36 @@ namespace FilmLibraryPP.Data
                     WatchedDate = new DateTime(2024, 2, 11),
                     IsWatched = true,
                     PosterUrl = "https://placehold.co/300x450/1a1a1a/eaeaea?text=Ojciec+Chrzestny",
-                    Tags = new List<string> { "Klasyka" }
+                    Tags = new List<Tag> { tags["Klasyka"] }
                 }
-            );
+            };
 
+            foreach (var film in films)
+            {
+                film.OwnerId = ownerId;
+            }
+
+            context.Films.AddRange(films);
+            context.SaveChanges();
+        }
+
+        private static void BackfillOrphans(ApplicationDbContext context, string? ownerId)
+        {
+            if (string.IsNullOrEmpty(ownerId))
+            {
+                return;
+            }
+
+            var orphans = context.Films.Where(f => f.OwnerId == null).ToList();
+            if (orphans.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var film in orphans)
+            {
+                film.OwnerId = ownerId;
+            }
             context.SaveChanges();
         }
     }

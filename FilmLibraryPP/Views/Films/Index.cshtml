@@ -1,14 +1,26 @@
+@using FilmLibraryPP.Data
 @model List<FilmLibraryPP.Models.Film>
 @{
     ViewData["Title"] = "Wszystkie filmy";
     var genres = ViewBag.Genres as IEnumerable<string> ?? Enumerable.Empty<string>();
     var search = ViewBag.Search as string;
     var selectedGenre = ViewBag.Genre as string;
+    var isAdmin = User.IsInRole(IdentitySeed.AdminRole);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Wszystkie filmy <span class="badge bg-secondary">@Model.Count</span></h2>
-    <a class="btn btn-success disabled" title="Dostępne po podpięciu bazy">+ Dodaj film</a>
+    <h2 class="mb-0">
+        @(isAdmin ? "Wszystkie filmy (admin)" : "Moja biblioteka")
+        <span class="badge bg-secondary">@Model.Count</span>
+    </h2>
+    <div class="d-flex gap-2">
+        @if (Model.Any())
+        {
+            <a asp-action="ExportCsv" class="btn btn-outline-secondary"><i class="bi bi-filetype-csv me-1"></i>Eksportuj CSV</a>
+        }
+        <a asp-action="SearchTmdb" class="btn btn-outline-primary"><i class="bi bi-cloud-download me-1"></i>Importuj z TMDB</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle me-1"></i>Dodaj film</a>
+    </div>
 </div>
 
 <form method="get" class="row g-2 mb-4 p-3 bg-light rounded">
@@ -65,6 +77,10 @@ else
                             <div class="mb-2">
                                 <span class="rating"><i class="bi bi-star-fill"></i> @film.Rating</span>
                             </div>
+                        }
+                        @if (isAdmin && film.Owner != null)
+                        {
+                            <small class="text-muted mb-2"><i class="bi bi-person-circle me-1"></i>@film.Owner.Email</small>
                         }
                         <a asp-action="Details" asp-route-id="@film.Id" class="btn btn-outline-primary btn-sm mt-auto">Szczegóły</a>
                     </div>

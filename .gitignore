@@ -390,6 +390,14 @@ FodyWeavers.xsd
 # Wewnętrzny plan implementacji - dokument roboczy, nie należy do repo
 PLAN.md
 
+# DocFX wygenerowana zawartość (komitujemy tylko źródła + konfigurację)
+docs/_site/
+docs/api/
+docs/obj/
+
+# Lokalne sekrety dla docker-compose — commitujemy tylko .env.example
+.env
+
 # Lokalne sekrety - hasła do bazy powinny iść do User Secrets,
 # nie do appsettings.Development.json. Jeśli mimo wszystko trafią,
 # odkomentuj poniższą linię:
@@ -397,11 +405,6 @@ PLAN.md
 
 # Lokalne paczki ZIP tworzone przy dzieleniu się projektem
 *.zip
-
-# Foldery narzędzi pomocniczych (gdyby pojawiły się w przyszłości)
-.claude/
-.cursor/
-.aider*
 
 # OS / IDE śmieci
 .DS_Store

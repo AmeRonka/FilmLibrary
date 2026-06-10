@@ -1,21 +1,34 @@
 using FilmLibraryPP.Data;
+using FilmLibraryPP.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmLibraryPP.Controllers
 {
+    [Authorize]
     public class StatisticsController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public StatisticsController(ApplicationDbContext db)
+        public StatisticsController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             _db = db;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var films = await _db.Films.ToListAsync();
+            var query = _db.Films.AsQueryable();
+            if (!User.IsInRole(IdentitySeed.AdminRole))
+            {
+                var uid = _userManager.GetUserId(User);
+                query = query.Where(f => f.OwnerId == uid);
+            }
+
+            var films = await query.ToListAsync();
 
             var watchedCount = films.Count(f => f.IsWatched);
             var toWatchCount = films.Count(f => !f.IsWatched);

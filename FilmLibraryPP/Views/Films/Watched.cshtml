@@ -1,6 +1,8 @@
+@using FilmLibraryPP.Data
 @model List<FilmLibraryPP.Models.Film>
 @{
     ViewData["Title"] = "Obejrzane";
+    var isAdmin = User.IsInRole(IdentitySeed.AdminRole);
 }
 
 <h2 class="mb-4"><i class="bi bi-check2-circle me-2"></i>Obejrzane <span class="badge bg-success">@Model.Count</span></h2>
@@ -22,6 +24,10 @@ else
                     <th>Gatunek</th>
                     <th>Ocena</th>
                     <th>Data obejrzenia</th>
+                    @if (isAdmin)
+                    {
+                        <th>Dodane przez</th>
+                    }
                     <th></th>
                 </tr>
             </thead>
@@ -36,6 +42,10 @@ else
                         <td><span class="badge bg-info text-dark">@film.Genre</span></td>
                         <td><span class="rating"><i class="bi bi-star-fill"></i> @film.Rating</span></td>
                         <td>@(film.WatchedDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                        @if (isAdmin)
+                        {
+                            <td><small class="text-muted">@(film.Owner?.Email ?? "—")</small></td>
+                        }
                         <td><a asp-action="Details" asp-route-id="@film.Id" class="btn btn-sm btn-outline-primary">Szczegóły</a></td>
                     </tr>
                 }
