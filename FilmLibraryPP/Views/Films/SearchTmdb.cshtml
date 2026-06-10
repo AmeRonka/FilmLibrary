@@ -1,0 +1,92 @@
+@using FilmLibraryPP.Services.Tmdb
+@model List<FilmLibraryPP.Services.Tmdb.TmdbSearchResult>
+@{
+    ViewData["Title"] = "Importuj z TMDB";
+    var query = ViewBag.Query as string;
+    var importError = TempData["ImportError"] as string;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Strona główna</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Filmy</a></li>
+        <li class="breadcrumb-item active">Importuj z TMDB</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4"><i class="bi bi-cloud-download me-2"></i>Importuj film z TMDB</h2>
+
+@if (!string.IsNullOrEmpty(importError))
+{
+    <div class="alert alert-danger">@importError</div>
+}
+
+<form method="get" class="row g-2 mb-4 p-3 bg-light rounded">
+    <div class="col-md-10">
+        <input type="text" name="query" value="@query" class="form-control"
+               placeholder="Wpisz tytuł filmu, np. „Diuna”..." required autofocus />
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Szukaj</button>
+    </div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(query))
+{
+    if (!Model.Any())
+    {
+        <div class="alert alert-warning">
+            Brak wyników dla „<strong>@query</strong>". Spróbuj innego tytułu (np. po angielsku) albo sprawdź połączenie.
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Znaleziono @Model.Count wyników.</p>
+        <div class="row g-3">
+            @foreach (var result in Model)
+            {
+                var posterUrl = TmdbMapper.ComposePosterUrl(result.PosterPath);
+                var year = TmdbMapper.ParseYear(result.ReleaseDate);
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="row g-0">
+                            <div class="col-4">
+                                @if (posterUrl != null)
+                                {
+                                    <img src="@posterUrl" alt="@result.Title" class="img-fluid rounded-start" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center bg-secondary text-white h-100 rounded-start" style="min-height:150px;">
+                                        <i class="bi bi-film fs-1"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-1">@result.Title</h6>
+                                    @if (year != null)
+                                    {
+                                        <small class="text-muted d-block mb-2">@year</small>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(result.Overview))
+                                    {
+                                        <p class="card-text small text-truncate-3">@result.Overview</p>
+                                    }
+                                    <form asp-action="ImportFromTmdb" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="tmdbId" value="@result.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-arrow-right-circle me-1"></i>Wybierz
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
