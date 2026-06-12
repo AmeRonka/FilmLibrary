@@ -18,4 +18,4 @@ Wygenerowana automatycznie z komentarzy XML kodu źródłowego za pomocą [DocFX
 
 - [Wprowadzenie](docs/introduction.md) — krótkie omówienie projektu
 - [Pierwsze uruchomienie](docs/getting-started.md) — instrukcja setupu lokalnego
-- [API Reference](api/FilmLibraryPP.html) — pełna referencja typów, klas, metod
+- [API Reference](api/FilmLibraryPP.Controllers.html) — pełna referencja typów, klas, metod
